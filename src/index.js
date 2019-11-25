@@ -7,6 +7,7 @@ const color = document.getElementById('color');
 const clear = document.getElementById('clear');
 const gum = document.getElementById('gum');
 const line = document.getElementById('line');
+const text = document.getElementById('text');
 
 const ctx = canvas.getContext('2d');
 const rect = canvas.getBoundingClientRect();
@@ -23,6 +24,7 @@ const mouseOut$ = fromEvent(canvas, 'mouseout');
 
 const lineBtnClick$ = fromEvent(line, 'click');
 const gumBtnClick$ = fromEvent(gum, 'click');
+const textBtnClick$ = fromEvent(text, 'click');
 
 const lineSubject = new BehaviorSubject(false);
 lineBtnClick$.pipe(tap(() => {
@@ -42,14 +44,18 @@ const buttonsInitialState = {gum: false, line: false, text: false};
 const buttonsStateSubject = new BehaviorSubject(buttonsInitialState);
 lineBtnClick$.pipe(tap(() => buttonsStateSubject.next({...buttonsInitialState, line: true}))).subscribe();
 gumBtnClick$.pipe(tap(() => buttonsStateSubject.next({...buttonsInitialState, gum: true}))).subscribe();
-buttonsStateSubject.pipe(tap(({gum: gumState, line: lineState}) => {
+textBtnClick$.pipe(tap(() => buttonsStateSubject.next({...buttonsInitialState, text: true}))).subscribe();
+buttonsStateSubject.pipe(tap(({gum: gumState, line: lineState, text:textState}) => {
 
     line.classList.remove('selected');
     gum.classList.remove('selected');
+    text.classList.remove('selected');
     if (lineState) {
         line.classList.toggle('selected');
     } else if (gumState) {
         gum.classList.toggle('selected');
+    } else if (textState) {
+        text.classList.toggle('selected');
     }
 })).subscribe();
 
