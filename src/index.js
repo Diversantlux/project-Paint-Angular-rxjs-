@@ -17,6 +17,7 @@ canvas.width = rect.width * scale;
 canvas.height = rect.height * scale;
 ctx.scale(scale, scale);
 
+const textChange$ = fromEvent(txt, 'change');
 const mouseMove$ = fromEvent(canvas, 'mousemove');
 const mouseDown$ = fromEvent(canvas, 'mousedown');
 const mouseUp$ = fromEvent(canvas, 'mouseup');
@@ -107,7 +108,15 @@ lineSelected$
 
     })).subscribe();
 
-
+const strokeText$ = combineLatest([textBtnClick$, mouseDown$, textChange$])
+    .pipe(
+        tap(([btnClick, mouseDown, textChange]) => {
+debugger
+        }),
+        tap(() => ctx.fillText('Hello World!', 50, 100, canvas.width, canvas.height),
+            ctx.font='20px Georgia')
+    );
+strokeText$.subscribe();
 
 const strokeGum$ = gumBtnClick$
     .pipe(
