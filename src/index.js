@@ -8,6 +8,7 @@ const clear = document.getElementById('clear');
 const gum = document.getElementById('gum');
 const line = document.getElementById('line');
 const text = document.getElementById('text');
+const txt = document.getElementById('txt');
 
 const ctx = canvas.getContext('2d');
 const rect = canvas.getBoundingClientRect();
@@ -108,14 +109,30 @@ lineSelected$
 
     })).subscribe();
 
-const strokeText$ = combineLatest([textBtnClick$, mouseDown$, textChange$])
+const strokeText$ = combineLatest([textBtnClick$, mouseDown$])
+
     .pipe(
-        tap(([btnClick, mouseDown, textChange]) => {
-debugger
+        map(([btnClick, mouseDown]) => {
+
+            return ({
+                x: mouseDown.clientX,
+                y: mouseDown.clientY,
+            })
+
         }),
-        tap(() => ctx.fillText('Hello World!', 50, 100, canvas.width, canvas.height),
-            ctx.font='20px Georgia')
-    );
+
+        tap(({
+
+            x,y
+        }) =>  {
+
+            txt.setAttribute('style', `position:fixed; display: block; width: 100px; height: 30px; overflow:hidden;
+               top:${y}px; left:${x}px; border: 2px solid #000;`)
+        }),
+        flatMap(() => textChange$),
+        tap( (event)=> ctx.fillText('Hello World!',  canvas.width, canvas.height)
+
+        ));
 strokeText$.subscribe();
 
 const strokeGum$ = gumBtnClick$
