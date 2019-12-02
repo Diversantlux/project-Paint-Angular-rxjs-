@@ -1,5 +1,5 @@
 import {BehaviorSubject, combineLatest, fromEvent, of} from 'rxjs'
-import {filter, flatMap, map, pairwise, pluck, startWith, takeUntil, tap, withLatestFrom} from 'rxjs/operators'
+import {filter, flatMap, map, pairwise, pluck, startWith, take, takeUntil, tap, withLatestFrom} from 'rxjs/operators'
 
 const canvas = document.querySelector('canvas');
 const range = document.getElementById('range');
@@ -9,6 +9,8 @@ const gum = document.getElementById('gum');
 const line = document.getElementById('line');
 const text = document.getElementById('text');
 const txt = document.getElementById('txt');
+const file = document.getElementById('file');
+
 
 const ctx = canvas.getContext('2d');
 const rect = canvas.getBoundingClientRect();
@@ -18,6 +20,7 @@ canvas.width = rect.width * scale;
 canvas.height = rect.height * scale;
 ctx.scale(scale, scale);
 
+const fileOnLoad$ = fromEvent(file, 'change');
 const textChange$ = fromEvent(txt, 'change');
 const mouseMove$ = fromEvent(canvas, 'mousemove');
 const mouseDown$ = fromEvent(canvas, 'mousedown');
@@ -27,6 +30,7 @@ const mouseOut$ = fromEvent(canvas, 'mouseout');
 const lineBtnClick$ = fromEvent(line, 'click');
 const gumBtnClick$ = fromEvent(gum, 'click');
 const textBtnClick$ = fromEvent(text, 'click');
+
 
 const lineSubject = new BehaviorSubject(false);
 lineBtnClick$.pipe(tap(() => {
@@ -69,6 +73,10 @@ function createInputStream(node) {
             startWith(node.value)
         )
 }
+
+
+
+
 const lineSelected$ = buttonsStateSubject.pipe(pluck('line'), filter(Boolean));
 lineSelected$.pipe(tap(() => ctx.globalCompositeOperation = 'source-over')).subscribe();
 const lineWidth$ = createInputStream(range);
@@ -129,10 +137,21 @@ const strokeText$ = combineLatest([textBtnClick$, mouseDown$])
             txt.setAttribute('style', `position:fixed; display: block; width: 100px; height: 30px; overflow:hidden;
                top:${y}px; left:${x}px; border: 2px solid #000;`)
         }),
-        flatMap(() => textChange$),
-        tap( (event)=> ctx.fillText('Hello World!',  canvas.width, canvas.height)
+        flatMap((coordinates) => combineLatest([textChange$.pipe(take(1)), of(coordinates)]).pipe(takeUntil(mouseDown$))),
+        tap( ([{
+            target:{value}
+              },{
+            x,y
+            }])=> ctx.fillText(value,  x, y, 200)
+        ),
+        tap((event)=> {
+          if  (event.target) { event.target.value = ''}
+        }),
+    tap(() => {
+        txt.setAttribute('style', `display:none;`)
+    })
+    );
 
-        ));
 strokeText$.subscribe();
 
 const strokeGum$ = gumBtnClick$

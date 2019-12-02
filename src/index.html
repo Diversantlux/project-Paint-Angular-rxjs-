@@ -33,34 +33,46 @@
 <div class="container">
   <canvas></canvas>
     <textarea type="text"   style="display: none;" id="txt" autofocus></textarea>
-    <img id="img" style="width: 100px; height: 100px;" />
+
+<!--    <img id="img" src="" style="width: 100px; height: 100px;" />-->
 
 <!--    <input type="text"  style="display: none;" id="txt">-->
 </div>
 
 <div class="containerBtn">
     <div>
-        <form action="img" method="post" enctype="multipart/form-data">
-            <input type="file" name="file" />
+
+            <input type="file" name="file" id="file"/>
+        <!--p>получить дом элемент инпута через элемент бай ид
+        подписаться на собитые ченче
+        из эвент ченче получить картинку
+            использоваться ctx drowimage</p>-->
+
+
+
 <!--                <input type="submit" value="Отправить" class="formFile">-->
-            <button type="submit"  class="formFile">Отправить</button>
-        </form>
+<!--            <button type="button"  class="formFile" id="load">Отправить</button>-->
+
     </div>
 
 <div class="input-filed">
     <button type="button"  id="gum">gum</button>
 </div>
+
 <div class="input-filed">
     <button type="button" id="line">line</button>
     <input type="range" min="1" max="4" value="2" id="range">
 </div>
+
 <div class="input-filed">
     <button type="button" id="text">text</button>
 
 </div>
+
 <div class="input-filed">
     <input type="color" id="color">
 </div>
+
 <div class="input-filed">
     <button type="button"  id="clear">Clear</button>
 </div>
